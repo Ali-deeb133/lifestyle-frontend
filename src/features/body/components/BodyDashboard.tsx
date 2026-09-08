@@ -74,7 +74,7 @@ function CircularMeter({ value, max, label, unit, color, gradientId, size = 120 
 }
 
 // ── Status Pill (Improved Glassmorphism) ─────────────────────────
-function StatusPill({ label, value,color }: StatusPillprops) {
+function StatusPill({ label, value }: StatusPillprops) {
   return (
     <div className="flex flex-col gap-1 px-4 py-2.5 rounded-xl backdrop-blur-xl border border-white/40 shadow-sm bg-white/30">
       <span className="text-[9px] uppercase font-black tracking-[0.15em] text-slate-400">{label}</span>
@@ -131,9 +131,9 @@ export function BodyDashboard() {
       {/* Pills & Insights Footer */}
       <div className="mt-auto space-y-4">
         <div className="grid grid-cols-3 gap-3">
-          <StatusPill label="Metabolism" value={ruleBase.metabolic_status} color="#6366f1" />
-          <StatusPill label="BFP Category" value={ruleBase.bfp_category}  color="#10b981" />
-          <StatusPill label="Segment" value={ruleBase.segment} color="#0ea5e9" />
+          <StatusPill label="Metabolism" value={ruleBase.metabolic_status} />
+          <StatusPill label="BFP Category" value={ruleBase.bfp_category} />
+          <StatusPill label="Segment" value={ruleBase.segment} />
         </div>
 
         <div className="bg-slate-900/90 backdrop-blur-2xl rounded-2xl p-5 text-white shadow-xl border border-white/10">
