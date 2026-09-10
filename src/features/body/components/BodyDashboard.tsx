@@ -1,7 +1,9 @@
 
 
+
 import { useEffect, useState } from "react";
 import { useBodyStore } from "../bodyStore";
+import bodyBg from "../../../assets/body.jpeg";
 
 type circularMeterProps = {
   value: number;
@@ -102,7 +104,7 @@ export function BodyDashboard() {
 
   return (
     <div className="w-full max-w-4xl mx-auto p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden bg-slate-50 min-h-[600px] flex flex-col"
-         style={{ backgroundImage: 'url(/src/assets/body.jpeg)', backgroundSize: 'cover', backgroundPosition: ' top center' }}>
+         style={{ backgroundImage: `url(${bodyBg})`, backgroundSize: 'cover', backgroundPosition: ' top center' }}>
       
       {/* طبقة التدرج اللوني لضمان وضوح النصوص (Overlay) */}
       <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-white/10 -z-10"></div>

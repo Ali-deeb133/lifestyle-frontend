@@ -4,6 +4,7 @@
 import { useSleepStore } from '../sleepStore'
 import { getSleepInsight } from '../../../shared/utils/insightMapper'
 import { Moon, Coffee, Activity, Bell, type LucideIcon  } from 'lucide-react'
+import sleepBg from "../../../assets/sleep.jpeg"
 
 const factorConfig: Record<string, { label: string; unit: string; icon: LucideIcon; color: string }> = {
   sleep_duration: { label: 'sleep_duration', unit: 'hour', icon: Moon, color: 'text-blue-400' },
@@ -33,7 +34,7 @@ export function SleepDashboard() {
       className="min-h-screen w-full bg-cover bg-center bg-no-repeat flex items-center justify-center p-4"
       style={{ 
         // ضع رابط صورتك هنا
-        backgroundImage: `url('src/assets/sleep.jpeg')`,
+        backgroundImage: `url(${sleepBg})`,
       }}
     >
      
