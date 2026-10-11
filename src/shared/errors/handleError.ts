@@ -6,18 +6,19 @@ export function handleError(error: AppError): string | null {
   switch (error.type) {
 
     case ERROR_TYPES.NETWORK:
-      return 'لا يوجد اتصال بالسيرفر'
+      return 'Cannot reach the server'
 
     case ERROR_TYPES.SERVER:
-      return 'مشكلة في السيرفر'
+      return 'Server error. Please try again.'
 
     // ❗ لا تتدخل بهدول → خليهم للـ UI
     case ERROR_TYPES.VALIDATION:
     case ERROR_TYPES.AUTH:
     case ERROR_TYPES.FORBIDDEN:
+    case ERROR_TYPES.NOT_FOUND:
       return null
 
     default:
-      return 'حدث خطأ غير متوقع'
+      return 'Something went wrong'
   }
 }

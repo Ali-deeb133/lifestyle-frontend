@@ -1,6 +1,3 @@
-
-
-
 import { useState, useCallback } from 'react'
 import { sleepService } from './sleepService'
 import { useSleepStore } from './sleepStore'
@@ -14,7 +11,7 @@ import { Toast } from '../../shared/utils/toaster'
 import type { SleepRequest } from './sleep.types'
 
 export function useSleep() {
-  const { setResult, setDetails, setLatest } = useSleepStore()
+  const { setAll, clear } = useSleepStore()
 
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -33,14 +30,27 @@ export function useSleep() {
     else setError(appError.message)
   }
 
-  const loadLatest = useCallback(async () => {
+  // 📦 جلب آخر نتيجة محفوظة عالسيرفر
+  const loadLatest = useCallback(async (): Promise<void> => {
     try {
-      const latest = await sleepService.getLatest()
-      setLatest(latest)
+      const [latest, details] = await Promise.all([
+        sleepService.getLatest(),
+        sleepService.getLatestDetails(),
+      ])
+      setAll(latest, details)
     } catch (err) {
-      handleErr(err)
+      const appError = toAppError(err)
+
+      // 404 → المستخدم ما عنده بيانات نوم لسا
+      if (appError.type === ERROR_TYPES.NOT_FOUND) {
+        clear()
+        return
+      }
+
+      const msg = handleError(appError)
+      if (msg) Toast.error(msg)
     }
-  }, [setLatest])
+  }, [setAll, clear])
 
   const submitSleep = useCallback(async (data: SleepRequest) => {
     setLoading(true)
@@ -50,8 +60,14 @@ export function useSleep() {
       const result = await sleepService.createSleep(data)
       const details = await sleepService.getLatestDetails()
 
-      setResult(result)
-      setDetails(details)
+      setAll(
+        {
+          predicted_efficiency: result.predicted_efficiency,
+          efficiency_label: result.efficiency_label,
+          created_at: result.created_at,
+        },
+        details
+      )
 
       return true
     } catch (err) {
@@ -60,7 +76,7 @@ export function useSleep() {
     } finally {
       setLoading(false)
     }
-  }, [setResult, setDetails])
+  }, [setAll])
 
   return {
     submitSleep,

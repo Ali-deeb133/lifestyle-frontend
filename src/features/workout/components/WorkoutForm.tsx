@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import { Button } from '../../../shared/ui/Button'
 import { ErrorMessage } from '../../../shared/ui/ErrorMessage'
 import { Card } from '../../../shared/ui/Card'
@@ -8,7 +8,7 @@ import type {
   FitnessLevel,
   FitnessGoal,
   Equipment,
-} from '../Workout.types'
+} from '../workout.types'
 
 const levels: FitnessLevel[] = ['Beginner', 'Novice', 'Intermediate', 'Advanced']
 
@@ -54,7 +54,8 @@ export function WorkoutForm({ onSuccess }: WorkoutFormProps) {
     return true
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
     if (!isValid()) return
 
     const success = await submitWorkout(form)
@@ -63,6 +64,7 @@ export function WorkoutForm({ onSuccess }: WorkoutFormProps) {
 
   return (
     <Card className="p-6 flex flex-col gap-5">
+      <form onSubmit={handleSubmit} noValidate className="contents">
 
       {/* Header */}
       <div>
@@ -186,11 +188,12 @@ export function WorkoutForm({ onSuccess }: WorkoutFormProps) {
       <Button
         fullWidth
         loading={loading}
-        onClick={handleSubmit}
+        type="submit"
       >
        Search for Programs
       </Button>
 
+      </form>
     </Card>
   )
 }

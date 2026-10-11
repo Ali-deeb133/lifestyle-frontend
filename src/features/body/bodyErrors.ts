@@ -1,4 +1,5 @@
 import { AppError } from '../../shared/errors/AppError'
+import { getServerMessage } from '../../shared/errors/serverMessage'
 
 type ValidationErrorResponse = {
   height?: string[]
@@ -18,7 +19,7 @@ export function parseBodyError(error: AppError): string {
   const raw = (error.originalError as { response?: { data?: unknown } })?.response?.data
 
   if (!isValidationErrorResponse(raw)) {
-    return 'تحقق من البيانات المدخلة'
+    return 'Check the entered data'
   }
 
   if (raw.height?.length)              return raw.height[0]
@@ -32,5 +33,6 @@ export function parseBodyError(error: AppError): string {
     return raw.non_field_errors[0]
   }
 
-  return 'تحقق من البيانات المدخلة'
+  // أخطاء حساب المقاييس (bmi, body_fat_percentage, ...) أو رسالة عامة من السيرفر
+  return getServerMessage(error) ?? 'Check the entered data'
 }

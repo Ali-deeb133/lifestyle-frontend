@@ -1,4 +1,4 @@
-import { useWorkoutStore } from '../workout/WorkoutStore'
+import { useWorkoutStore } from '../workout/workoutStore'
 
 export function useWorkoutSummary() {
   const { selected, request } = useWorkoutStore()

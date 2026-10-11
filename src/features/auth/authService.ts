@@ -34,7 +34,10 @@ export const authService = {
 
   async logout(): Promise<void> {
     const refresh = tokenStorage.getRefresh()
+    try {
       await api.post('/api/accounts/logout/', { refresh })
-    tokenStorage.clearTokens()
+    } finally {
+      tokenStorage.clearTokens()
+    }
   },
 }

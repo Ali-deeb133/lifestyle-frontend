@@ -1,27 +1,12 @@
 
-import { useState } from 'react'
-import { z } from 'zod'
+import { useState, type FormEvent } from 'react'
 import { Input } from '../../../shared/ui/Input'
 import { Button } from '../../../shared/ui/Button'
 import { ErrorMessage } from '../../../shared/ui/ErrorMessage'
 import { Card } from '../../../shared/ui/Card'
 import { useSleep } from '../useSleep'
+import { sleepSchema } from './SleepSchema'
 import type { SleepRequest } from '../sleep.types'
-
-/* =========================
-   ZOD SCHEMA
-========================= */
-const sleepSchema = z.object({
-  sleep_duration: z.coerce.number().min(0).max(24),
-  exercise_frequency: z.coerce.number().int().min(0).max(7),
-  smoking_status: z.boolean(),
-  bed_time: z
-    .string()
-    .regex(/^([01]\d|2[0-3]):([0-5]\d)$/),
-  coffee_cups: z.coerce.number().int().min(0).max(20),
-  alcohol_glasses: z.coerce.number().int().min(0).max(20),
-  awakenings: z.coerce.number().int().min(0).max(20),
-})
 
 interface FormState {
   sleep_duration: string
@@ -56,8 +41,7 @@ export function SleepForm({ onSuccess }: { onSuccess: () => void }) {
     const result = sleepSchema.safeParse(form)
 
     if (!result.success) {
-      const firstError = Object.values(result.error.flatten().fieldErrors)[0]?.[0]
-      setValidationError(firstError || 'Check the entered data')
+      setValidationError(result.error.issues[0]?.message || 'Check the entered data')
       return null
     }
 
@@ -65,7 +49,8 @@ export function SleepForm({ onSuccess }: { onSuccess: () => void }) {
     return result.data
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
     const data = validateAndTransform()
     if (!data) return
 
@@ -75,6 +60,7 @@ export function SleepForm({ onSuccess }: { onSuccess: () => void }) {
 
   return (
     <Card className="p-6 flex flex-col gap-6 bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl">
+      <form onSubmit={handleSubmit} noValidate className="contents">
       
       {/* Header */}
       <div className="border-b border-white/5 pb-4">
@@ -90,6 +76,10 @@ export function SleepForm({ onSuccess }: { onSuccess: () => void }) {
       <div className="grid grid-cols-2 gap-x-4 gap-y-5">
         <Input
           label="Sleep Duration (Hours)"
+          type="number"
+          min={1}
+          max={24}
+          step="any"
           value={form.sleep_duration}
           onChange={(e) => update('sleep_duration', e.target.value)}
         />
@@ -103,24 +93,36 @@ export function SleepForm({ onSuccess }: { onSuccess: () => void }) {
 
         <Input
           label="Exercise Frequency (Days/Week)"
+          type="number"
+          min={0}
+          max={7}
           value={form.exercise_frequency}
           onChange={(e) => update('exercise_frequency', e.target.value)}
         />
 
         <Input
-          label="awakenings"
+          label="Awakenings (Times)"
+          type="number"
+          min={0}
+          max={20}
           value={form.awakenings}
           onChange={(e) => update('awakenings', e.target.value)}
         />
 
         <Input
-          label='coffee_cups'
+          label="Coffee Cups"
+          type="number"
+          min={0}
+          max={20}
           value={form.coffee_cups}
           onChange={(e) => update('coffee_cups', e.target.value)}
         />
 
         <Input
           label="Alcohol Glasses"
+          type="number"
+          min={0}
+          max={20}
           value={form.alcohol_glasses}
           onChange={(e) => update('alcohol_glasses', e.target.value)}
         />
@@ -166,11 +168,12 @@ export function SleepForm({ onSuccess }: { onSuccess: () => void }) {
       <Button 
         fullWidth 
         loading={loading} 
-        onClick={handleSubmit}
+        type="submit"
         className="py-4 bg-slate-900 hover:bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-200 transition-all duration-300 font-black uppercase tracking-widest text-xs"
       >
         Analyze Now
       </Button>
+      </form>
     </Card>
   )
 }

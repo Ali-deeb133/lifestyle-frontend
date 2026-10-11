@@ -1,73 +1,101 @@
-# React + TypeScript + Vite
+# LifeStyle
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend for LifeStyle, a personal health dashboard. A signed-in user enters body
+measurements, sleep habits and workout preferences; the backend returns computed
+metrics, a sleep-efficiency prediction and recommended training programs, and this
+app visualises them and combines them into one health score.
 
-Currently, two official plugins are available:
+The backend is a separate Django REST project. This repository contains only the
+frontend.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack
 
-## React Compiler
+- React 19, TypeScript, Vite
+- Tailwind CSS v4 (custom utilities are defined in `src/index.css`)
+- React Router for the two routes
+- Zustand for state, persisted to `localStorage`
+- Axios with JWT access/refresh handling
+- Zod for form validation
+- Vitest and Testing Library for tests
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Getting started
 
-## Expanding the ESLint configuration
+Requires Node.js 20 or newer.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+cp .env.example .env    # then set VITE_API_BASE_URL to your backend
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+| Variable | Purpose | Default |
+|---|---|---|
+| `VITE_API_BASE_URL` | Base URL of the backend API, no trailing slash | `http://127.0.0.1:8000` |
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Scripts
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Command | What it does |
+|---|---|
+| `npm run dev` | Start the dev server |
+| `npm run build` | Type-check and build for production into `dist/` |
+| `npm run preview` | Serve the production build locally |
+| `npm run lint` | Run ESLint |
+| `npm test` | Run the unit tests once |
+| `npm run check` | Type-check, lint and test; run this before committing |
+
+## Routes
+
+| Path | Page |
+|---|---|
+| `/` | Landing page with login and registration |
+| `/dashboard` | Body, sleep, workout and overview views; requires a signed-in user |
+
+## Project structure
+
 ```
+src/
+  pages/      HomePage, Dashboard
+  home/       landing-page sections and their animation helpers
+  features/
+    auth/     login, registration, session restore, route guard
+    body/     body measurements form and metrics dashboard
+    sleep/    sleep form and efficiency dashboard
+    workout/  program search form and program dashboard
+    overview/ combined health score, derived from the three stores
+  shared/
+    api/      Axios instance and token refresh
+    errors/   AppError, HTTP-to-AppError mapping, error boundary
+    layout/   dashboard sidebar
+    ui/       Button, Input, Card, Modal, Badge, Spinner, ErrorMessage
+    utils/    toasts, insight text
+```
+
+Each feature follows the same layering: component → `useX` hook → `xService`
+→ Axios, with results written to `xStore`.
+
+## How data is stored
+
+- Analysis results (body, sleep, workout) are kept in the browser's `localStorage`.
+  They are not loaded back from the server, so they appear only in the browser
+  where they were submitted.
+- Results are cleared on every login and logout, so two users sharing a browser
+  never see each other's data.
+- JWT tokens are also kept in `localStorage`. An expired access token is refreshed
+  automatically; if the refresh token is rejected, the user is signed out.
+
+## API endpoints used
+
+| Feature | Endpoints |
+|---|---|
+| Auth | `POST /api/accounts/register/`, `login/`, `logout/`, `token/refresh/`, `GET /api/accounts/me/` |
+| Body | `POST /api/body_profiles/create/`, `POST /api/body-metrics/calculate/`, `POST /api/rule-base/generate/` |
+| Sleep | `POST /api/sleep/create/`, `GET /api/sleep/latest/details/` |
+| Workout | `POST /api/sport/recommend/` |
+
+A sleep analysis requires a body analysis first; the backend rejects it otherwise.
+
+## Deployment
+
+The app is a single-page application, so the host must serve `index.html` for
+unknown paths. `public/_redirects` does this on Netlify; other hosts need their
+own equivalent setting.

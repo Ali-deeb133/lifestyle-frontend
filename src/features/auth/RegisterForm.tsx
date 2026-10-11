@@ -3,7 +3,7 @@
 
 
 
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import { z } from 'zod'
 
 import { Input } from '../../shared/ui/Input'
@@ -39,7 +39,8 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
 
   const [localError, setLocalError] = useState<string | null>(null)
 
-  async function handleSubmit() {
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
     setLocalError(null)
 
     /* =========================
@@ -62,7 +63,7 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
 
       {/* Header */}
       <div className="text-center">
@@ -124,7 +125,7 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
       <Button
         fullWidth
         loading={loading}
-        onClick={handleSubmit}
+        type="submit"
       >
         Create Account
       </Button>
@@ -133,6 +134,7 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
       <p className="text-center text-sm text-slate-500">
         Already have an account?{' '}
         <button
+          type="button"
           onClick={onSwitchToLogin}
           className="text-cyan-400 hover:text-cyan-300 font-medium transition-colors duration-200"
         >
@@ -140,6 +142,6 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
         </button>
       </p>
 
-    </div>
+    </form>
   )
 }

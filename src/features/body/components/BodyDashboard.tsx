@@ -94,11 +94,11 @@ export function BodyDashboard() {
   const meters = [
     { value: metrics.bmi,                        max: 40, label: "BMI",       unit: "kg/m²", color: ["#818cf8", "#6366f1"], id: "g1" },
     { value: metrics.body_fat_percentage,        max: 40, label: "Body Fat", unit: "%",     color: ["#fda4af", "#fb7185"], id: "g2" },
-    { value: (metrics.lean_mass/profile.weight)*100, max: 100, label: "Lean Mass", unit: "%",     color: ["#6ee7b7", "#10b981"], id: "g3" },
+    { value: (metrics.lean_mass/profile.weight)*100, max: 100, label: "Lean %", unit: "%",     color: ["#6ee7b7", "#10b981"], id: "g3" },
     { value: metrics.bmr,                        max: 2500, label: "BMR",     unit: "kcal",  color: ["#fcd34d", "#f59e0b"], id: "g4" },
     { value: metrics.tdee,                       max: 4000, label: "TDEE",    unit: "kcal",  color: ["#7dd3fc", "#0ea5e9"], id: "g5" },
     { value: metrics.fat_mass,                   max: profile.weight, label: "Fat Mass", unit: "kg", color: ["#fca5a5", "#ef4444"], id: "g6" },
-    { value: metrics.lean_mass,                  max: profile.weight, label: "Muscle",   unit: "kg", color: ["#86efac", "#22c55e"], id: "g7" },
+    { value: metrics.lean_mass,                  max: profile.weight, label: "Lean Mass",   unit: "kg", color: ["#86efac", "#22c55e"], id: "g7" },
     { value: metrics.ideal_body_fat_percentage,  max: 40, label: "Ideal %",   unit: "%",     color: ["#d8b4fe", "#a855f7"], id: "g8" },
   ];
 
@@ -107,10 +107,10 @@ export function BodyDashboard() {
          style={{ backgroundImage: `url(${bodyBg})`, backgroundSize: 'cover', backgroundPosition: ' top center' }}>
       
       {/* طبقة التدرج اللوني لضمان وضوح النصوص (Overlay) */}
-      <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-white/10 -z-10"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-white/10"></div>
 
       {/* Header */}
-      <div className="flex justify-between items-start mb-10">
+      <div className="relative flex justify-between items-start mb-10">
         <div className="space-y-1">
           <h2 className="text-2xl font-black text-slate-900 tracking-tight uppercase">Body Metrics</h2>
           <p className="text-xs font-bold text-indigo-500 uppercase tracking-widest">{ruleBase.primary_pattern}</p>
@@ -126,12 +126,12 @@ export function BodyDashboard() {
       </div>
 
       {/* Meters Grid - زيادة المسافات (Gap) */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 gap-x-8 mb-12">
+      <div className="relative grid grid-cols-2 md:grid-cols-4 gap-y-12 gap-x-8 mb-12">
         {meters.map((m) => <CircularMeter key={m.id} {...m} gradientId={m.id} />)}
       </div>
 
       {/* Pills & Insights Footer */}
-      <div className="mt-auto space-y-4">
+      <div className="relative mt-auto space-y-4">
         <div className="grid grid-cols-3 gap-3">
           <StatusPill label="Metabolism" value={ruleBase.metabolic_status} />
           <StatusPill label="BFP Category" value={ruleBase.bfp_category} />
@@ -141,7 +141,7 @@ export function BodyDashboard() {
         <div className="bg-slate-900/90 backdrop-blur-2xl rounded-2xl p-5 text-white shadow-xl border border-white/10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <p className="text-sm font-medium text-slate-200">
-              Your condition is <span className="text-indigo-400 font-bold">{ruleBase.primary_pattern}</span>.You Need<span className="text-amber-400 font-bold">{Math.round(metrics.tdee)}</span> calories per day.
+              Your condition is <span className="text-indigo-400 font-bold">{ruleBase.primary_pattern}</span>. You need{' '}<span className="text-amber-400 font-bold">{Math.round(metrics.tdee)}</span> calories per day.
             </p>
             {metrics.fat_to_lose > 0 && (
               <div className="flex items-center gap-2 bg-red-500/20 px-3 py-1.5 rounded-lg border border-red-500/30">

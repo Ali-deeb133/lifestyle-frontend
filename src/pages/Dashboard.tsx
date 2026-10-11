@@ -6,11 +6,14 @@ import { BodyDashboard } from "../features/body/components/BodyDashboard"
 import { SleepForm } from "../features/sleep/components/SleepForm"
 import { SleepDashboard } from "../features/sleep/components/SleepDashboard"
 import { WorkoutForm } from "../features/workout/components/WorkoutForm"
-import { WorkoutDashboard } from "../features/workout/components/WorkDashboard"
+import { WorkoutDashboard } from "../features/workout/components/WorkoutDashboard"
 
-import { Sidebar } from "../shared/layout/SideBare"
+import { Sidebar } from "../shared/layout/Sidebar"
 import { useState } from "react"
 import { OverviewDashboard } from "../features/overview/OverviewDashboard"
+import { useAuth } from "../features/auth/useAuth"
+import { Modal } from "../shared/ui/Modal"
+import { Button } from "../shared/ui/Button"
 
 
 type ActiveView = 'overview' | 'body' | 'sleep' | 'workout'
@@ -22,25 +25,39 @@ const viewMeta: Record<ActiveView, { title: string; subtitle: string }> = {
   workout:  { title: 'Workout Plan',  subtitle: 'AI-Powered Recommendations' },
 }
 
-// function ComingSoon({ label }: { label: string }) {
-//   return (
-//     <div className="flex-1 flex items-center justify-center min-h-[400px]">
-//       <div className="text-center">
-//         <div className="text-5xl mb-4">🚧</div>
-//         <h2 className="text-xl font-bold text-slate-700">{label}</h2>
-//         <p className="text-sm text-slate-400 mt-2">قريباً...</p>
-//       </div>
-//     </div>   )
-// }
-
 export function Dashboard() {
   const [activeView, setActiveView] = useState<ActiveView>('body')
   const meta = viewMeta[activeView]
 
+  const { user, logout } = useAuth()
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
+  const userName = user ? `${user.first_name} ${user.last_name}`.trim() || user.email : undefined
+
+  const handleConfirmLogout = async () => {
+    setShowLogoutModal(false)
+    await logout()
+  }
+
   return (
     <div className="flex min-h-screen bg-slate-50">
 
-      <Sidebar activeView={activeView} onViewChange={setActiveView} />
+      <Sidebar
+        activeView={activeView}
+        onViewChange={setActiveView}
+        userName={userName}
+        onLogout={() => setShowLogoutModal(true)}
+      />
+
+      <Modal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} size="sm">
+        <div className="text-center">
+          <p className="text-white text-sm font-semibold">Confirm Logout</p>
+          <p className="mt-1 text-xs text-slate-300">Are you sure?</p>
+          <div className="mt-5 flex justify-center gap-2">
+            <Button variant="secondary" size="sm" onClick={() => setShowLogoutModal(false)}>No</Button>
+            <Button variant="danger" size="sm" onClick={handleConfirmLogout}>Yes</Button>
+          </div>
+        </div>
+      </Modal>
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 

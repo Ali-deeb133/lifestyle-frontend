@@ -2,14 +2,14 @@ import { useSleepStore } from '../sleep/sleepStore'
 import { getSleepInsight } from '../../shared/utils/insightMapper'
 
 export function useSleepSummary() {
-  const { result, details } = useSleepStore()
+  const { latest, details } = useSleepStore()
 
-  if (!result || !details) return null
+  if (!latest || !details) return null
 
   return {
-    efficiency:      result.predicted_efficiency,
-    label:           result.efficiency_label,
-    insight:         getSleepInsight(result.efficiency_label),
+    efficiency:      latest.predicted_efficiency,
+    label:           latest.efficiency_label,
+    insight:         getSleepInsight(latest.efficiency_label),
     sleepDuration:   details.factors_analysis.sleep_duration.value,
     durationEval:    details.factors_analysis.sleep_duration.evaluation,
     awakenings:      details.factors_analysis.awakenings.value,
@@ -17,10 +17,9 @@ export function useSleepSummary() {
     caffeineEval:    details.factors_analysis.caffeine.evaluation,
     exerciseEval:    details.factors_analysis.exercise_frequency.evaluation,
     score: (() => {
-      if (result.predicted_efficiency >= 80) return 90
-      if (result.predicted_efficiency >= 60) return 65
-      if (result.predicted_efficiency <= 60) return 55
-      return 40
+      if (latest.predicted_efficiency >= 80) return 90
+      if (latest.predicted_efficiency >= 60) return 65
+      return 55
     })(),
   }
 }

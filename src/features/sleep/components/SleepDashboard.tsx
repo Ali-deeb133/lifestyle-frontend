@@ -7,19 +7,19 @@ import { Moon, Coffee, Activity, Bell, type LucideIcon  } from 'lucide-react'
 import sleepBg from "../../../assets/sleep.jpeg"
 
 const factorConfig: Record<string, { label: string; unit: string; icon: LucideIcon; color: string }> = {
-  sleep_duration: { label: 'sleep_duration', unit: 'hour', icon: Moon, color: 'text-blue-400' },
-  caffeine: { label:'caffeine', unit: 'ml', icon: Coffee, color: 'text-orange-400' },
-  awakenings: { label: 'awakenings', unit: 'times', icon: Bell, color: 'text-purple-400' },
-  exercise_frequency: { label: 'exercise_frequency', unit: 'days/week', icon: Activity, color: 'text-emerald-400' },
- alcohol: { label: 'alcohol', unit: 'glasses', icon:Coffee, color: 'text-orange-400' }
+  sleep_duration: { label: 'Sleep duration', unit: 'hours', icon: Moon, color: 'text-blue-400' },
+  caffeine: { label: 'Caffeine', unit: 'mg', icon: Coffee, color: 'text-orange-400' },
+  awakenings: { label: 'Awakenings', unit: 'times', icon: Bell, color: 'text-purple-400' },
+  exercise_frequency: { label: 'Exercise', unit: 'days/week', icon: Activity, color: 'text-emerald-400' },
+ alcohol: { label: 'Alcohol', unit: 'g', icon:Coffee, color: 'text-orange-400' }
 }
 
 export function SleepDashboard() {
-  const { result, details } = useSleepStore()
+  const { latest, details } = useSleepStore()
 
-  if (!result || !details?.factors_analysis) return null
+  if (!latest || !details?.factors_analysis) return null
 
-  const efficiency = result.predicted_efficiency ?? 0
+  const efficiency = latest.predicted_efficiency ?? 0
   const factors = details.factors_analysis
 
   // إعدادات الدولاب (Circle Settings)
@@ -79,7 +79,7 @@ export function SleepDashboard() {
           <div className="mt-8 text-center">
              <h2 className="text-xl font-medium text-white mb-1">Your Daily Report</h2>
              <p className="text-emerald-400 text-sm font-semibold tracking-wide">
-               {getSleepInsight(result.efficiency_label ?? '')}
+               {getSleepInsight(latest.efficiency_label ?? '')}
              </p>
           </div>
         </div>

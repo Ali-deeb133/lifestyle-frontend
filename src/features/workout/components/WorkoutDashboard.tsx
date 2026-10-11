@@ -1,11 +1,11 @@
 
 
 import { useState } from 'react'
-import { useWorkoutStore } from '../WorkoutStore'
+import { useWorkoutStore } from '../workoutStore'
 import { Card } from '../../../shared/ui/Card'
 import { Badge } from '../../../shared/ui/Badge'
 import { Clock, Dumbbell, Calendar, ListChecks, ChevronLeft } from 'lucide-react'
-import type { Exercise } from '../Workout.types'
+import type { Exercise } from '../workout.types'
 
 /**
  * 1. مكون شريط نسبة الملائمة
@@ -68,8 +68,14 @@ export function WorkoutDashboard() {
 
   if (!programs.length || !selected) return null
 
-  const weeks = [...new Set(selected.exercises.map(e => e.week))].sort()
-  const daysInWeek = [...new Set(selected.exercises.filter(e => e.week === activeWeek).map(e => e.day))].sort()
+  const daysOf = (week: number) =>
+    [...new Set(selected.exercises.filter(e => e.week === week).map(e => e.day))].sort((a, b) => a - b)
+
+  const weeks = [...new Set(selected.exercises.map(e => e.week))].sort((a, b) => a - b)
+  // fall back to the first available week/day when the stored selection doesn't exist in this program
+  const currentWeek = weeks.includes(activeWeek) ? activeWeek : weeks[0]
+  const daysInWeek = daysOf(currentWeek)
+  const currentDay = daysInWeek.includes(activeDay) ? activeDay : daysInWeek[0]
 
   return (
     <div className="flex flex-col gap-10 w-full max-w-6xl mx-auto p-6 bg-gradient-to-br from-sky-50 via-white to-sky-50 min-h-screen font-sans">
@@ -86,7 +92,7 @@ export function WorkoutDashboard() {
               <p className="text-sm text-slate-500 font-medium">Choose the plan that fits your lifestyle</p>
             </div>
           </div>
-          <Badge label={`${programs.length} Programs`}  border-slate-100 text-slate-600  />
+          <Badge label={`${programs.length} Programs`} />
         </div>
 
         <div className="flex gap-5 overflow-x-auto pb-6 no-scrollbar -mx-2 px-2">
@@ -108,7 +114,7 @@ export function WorkoutDashboard() {
                   <div className={`p-2.5 rounded-xl ${isSelected ? 'bg-indigo-300 text-white' : 'bg-slate-100 text-slate-400'}`}>
                     <Clock size={20} />
                   </div>
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{prog.program_length} أسابيع</span>
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{prog.program_length} weeks</span>
                 </div>
 
                 <h4 className={`text-md font-black mb-4 min-h-[44px] leading-tight ${isSelected ? 'text-slate-950' : 'text-slate-800'}`}>
@@ -116,8 +122,8 @@ export function WorkoutDashboard() {
                 </h4>
                 
                 <div className="flex gap-4 text-[11px] font-bold text-slate-500 mb-6 py-3 border-y border-slate-50 w-full">
-                  <div className="flex items-center gap-1.5"><Clock size={14} className="text-indigo-300"/> {Math.round(prog.time_per_workout / 60)} ساعة</div>
-                  <div className="flex items-center gap-1.5"><ListChecks size={14} className="text-indigo-300"/> {prog.total_exercises} حركة</div>
+                  <div className="flex items-center gap-1.5"><Clock size={14} className="text-indigo-300"/> {Math.round(prog.time_per_workout)} min</div>
+                  <div className="flex items-center gap-1.5"><ListChecks size={14} className="text-indigo-300"/> {prog.total_exercises} exercises</div>
                 </div>
 
                 <SimilarityBar value={prog.similarity} />
@@ -145,9 +151,9 @@ export function WorkoutDashboard() {
                  {weeks.map(w => (
                    <button
                      key={w}
-                     onClick={() => { setActiveWeek(w); setActiveDay(1); }}
+                     onClick={() => { setActiveWeek(w); setActiveDay(daysOf(w)[0] ?? 1); }}
                      className={`w-11 h-11 rounded-2xl flex items-center justify-center text-sm font-black transition-all ${
-                       activeWeek === w 
+                       currentWeek === w 
                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 scale-110' 
                        : 'bg-slate-50 text-slate-400 border border-transparent hover:border-slate-200'
                      }`}
@@ -169,7 +175,7 @@ export function WorkoutDashboard() {
                      key={d}
                      onClick={() => setActiveDay(d)}
                      className={`py-3.5 rounded-2xl text-xs font-black transition-all border text-center ${
-                       activeDay === d 
+                       currentDay === d 
                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200 shadow-sm' 
                        : 'bg-slate-50 border-transparent text-slate-400 hover:bg-slate-100'
                      }`}
@@ -192,13 +198,13 @@ export function WorkoutDashboard() {
                 <h3 className="text-xl font-black text-slate-900">Today's exercises</h3>
               </div>
               <div className="flex items-center gap-2 px-4 py-1.5 bg-indigo-50 text-indigo-300 rounded-full text-[10px] font-black border border-indigo-100">
-                W{activeWeek} <ChevronLeft size={10} /> DAY {activeDay}
+                W{currentWeek} <ChevronLeft size={10} /> DAY {currentDay}
               </div>
            </div>
            
            <div className="grid grid-cols-1 gap-3 overflow-y-auto max-h-[650px] pr-2 custom-scrollbar">
              {selected.exercises
-               .filter(e => e.week === activeWeek && e.day === activeDay)
+               .filter(e => e.week === currentWeek && e.day === currentDay)
                .map((ex, i) => (
                  <ExerciseItem key={i} ex={ex} />
                ))

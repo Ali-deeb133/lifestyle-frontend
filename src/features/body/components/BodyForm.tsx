@@ -2,7 +2,7 @@
 
 
 
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import { Input } from '../../../shared/ui/Input'
 import { Button } from '../../../shared/ui/Button'
 import { ErrorMessage } from '../../../shared/ui/ErrorMessage'
@@ -12,7 +12,7 @@ import { bodySchema } from './BodySchema'
 import type { BodyProfileRequest, ActivityLevel } from '../body.types'
 
 const activityOptions: { value: ActivityLevel; label: string }[] = [
-  { value: 'none',      label: 'none'                  },
+  { value: 'none',      label: 'None'                  },
   { value: 'very_low',  label: 'Very Low'    },
   { value: 'light',     label: 'Light'    },
   { value: 'moderate',  label: 'Moderate'   },
@@ -42,19 +42,23 @@ export function BodyForm({ onSuccess }: BodyFormProps) {
     setForm((prev) => ({ ...prev, [key]: value }))
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
     setLocalError(null)
     const result = bodySchema.safeParse(form)
     if (!result.success) {
       setLocalError(result.error.issues[0].message)
       return
     }
-    const success = await submitBodyData(result.data)
+    const payload = { ...result.data }
+    if (payload.gender === 'male') delete payload.hip_circumference
+    const success = await submitBodyData(payload)
     if (success) onSuccess()
   }
 
   return (
     <Card className="p-5 flex flex-col gap-5 bg-white/80 backdrop-blur-sm border-none shadow-xl rounded-[2.5rem]">
+      <form onSubmit={handleSubmit} noValidate className="contents">
 
       {/* Header - أضيق وأوضح */}
       <div className="border-b border-slate-50 pb-3">
@@ -71,6 +75,7 @@ export function BodyForm({ onSuccess }: BodyFormProps) {
           {(['male', 'female'] as const).map((g) => (
             <button
               key={g}
+              type="button"
               onClick={() => update('gender', g)}
               className={`flex items-center justify-center gap-2 py-2.5 rounded-2xl border-2 transition-all duration-300
                 ${form.gender === g
@@ -179,12 +184,13 @@ export function BodyForm({ onSuccess }: BodyFormProps) {
       <Button 
         fullWidth 
         loading={loading} 
-        onClick={handleSubmit}
+        type="submit"
         className="py-4 bg-slate-900 hover:bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-200 transition-all duration-300 font-black uppercase tracking-widest text-xs"
       >
         Analyze Now
       </Button>
 
+      </form>
     </Card>
   )
 }

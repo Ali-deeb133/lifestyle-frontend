@@ -5,7 +5,10 @@ import {
   Activity, 
   Moon, 
   Dumbbell,  
+  Home,
+  LogOut,
 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 type SidebarView = 'body' | 'sleep' | 'workout' | 'overview'
 
@@ -56,24 +59,15 @@ const navItems: NavItem[] = [
 interface SidebarProps {
   activeView: SidebarView
   onViewChange: (view: SidebarView) => void
+  userName?: string
+  onLogout?: () => void
 }
 
-export function Sidebar({ activeView, onViewChange }: SidebarProps) {
+export function Sidebar({ activeView, onViewChange, userName, onLogout }: SidebarProps) {
   const [collapsed] = useState(false)
 
   return (
-    <aside className={`
-      /* هنا التعديل اللي طلبته */
-      sticky top-0 
-      h-screen 
-      /* --------------------- */
-      flex flex-col 
-      bg-gray -100
-      border-r 
-      -gray-200
-      transition-all duration-300 
-      ${collapsed ? 'w-[72px]' : 'w-[200px]'}
-    `}>
+    <aside className={`sticky top-0 h-screen flex flex-col bg-gray-100 border-r border-gray-200 transition-all duration-300 ${collapsed ? 'w-[72px]' : 'w-[200px]'}`}>
 
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 py-6 flex-shrink-0">
@@ -142,6 +136,31 @@ export function Sidebar({ activeView, onViewChange }: SidebarProps) {
           )
         })}
       </nav>
+
+      {/* Account */}
+      <div className="flex flex-col gap-1 p-3 border-t border-slate-100 flex-shrink-0">
+        {!collapsed && userName && (
+          <p className="px-3 pb-1 text-xs font-medium text-slate-500 truncate">{userName}</p>
+        )}
+
+        <Link
+          to="/"
+          className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition-colors ${collapsed ? 'justify-center' : ''}`}
+        >
+          <Home size={18} />
+          {!collapsed && <span className="text-sm font-medium">Home</span>}
+        </Link>
+
+        {onLogout && (
+          <button
+            onClick={onLogout}
+            className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-500 hover:bg-red-50 hover:text-red-600 transition-colors ${collapsed ? 'justify-center' : ''}`}
+          >
+            <LogOut size={18} />
+            {!collapsed && <span className="text-sm font-medium">Logout</span>}
+          </button>
+        )}
+      </div>
 
       {/* Collapse toggle */}
       {/* <div className="p-3 border-t border-slate-50">

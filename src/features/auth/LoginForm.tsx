@@ -2,7 +2,7 @@
 
 
 
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import { z } from 'zod'
 
 import { Input } from '../../shared/ui/Input'
@@ -34,7 +34,8 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
 
   const [localError, setLocalError] = useState<string | null>(null)
 
-  async function handleSubmit() {
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
     setLocalError(null)
 
     /* =========================
@@ -57,7 +58,7 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
 
       {/* Header */}
       <div className="text-center">
@@ -93,7 +94,7 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
       <Button
         fullWidth
         loading={loading}
-        onClick={handleSubmit}
+        type="submit"
       >
         Login
       </Button>
@@ -102,6 +103,7 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
       <p className="text-center text-sm text-slate-500">
         Don't have an account?{' '}
         <button
+          type="button"
           onClick={onSwitchToRegister}
           className="text-cyan-400 hover:text-cyan-300 font-medium transition-colors duration-200"
         >
@@ -109,6 +111,6 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
         </button>
       </p>
 
-    </div>
+    </form>
   )
 }

@@ -64,30 +64,8 @@ export function useBody() {
     }
   }
 
-  // 📦 جلب آخر بيانات (ملاحظة تحت 👇)
-  async function loadLatest(): Promise<void> {
-    setLoading(true)
-    try {
-      const profile = await bodyService.getLatestProfile()
-      const metrics = await bodyService.calculateMetrics()
-      const ruleBase = await bodyService.generateRuleBase()
-
-      setAll(profile, metrics, ruleBase)
-    } catch (err) {
-      const appError = toAppError(err)
-      const toastMessage = handleError(appError)
-
-      if (toastMessage) {
-        Toast.error(toastMessage)
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
-
   return {
     submitBodyData,
-    loadLatest,
     error,
     warnings,
     loading,

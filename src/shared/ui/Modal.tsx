@@ -1,7 +1,4 @@
-
-
-
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 
 interface ModalProps {
   isOpen: boolean
@@ -27,7 +24,8 @@ export function Modal({
   const [mounted, setMounted] = useState(isOpen)
   const [visible, setVisible] = useState(isOpen)
 
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // mount as soon as it opens (adjusted during render, not in an effect)
+  if (isOpen && !mounted) setMounted(true)
 
   // Escape key
   useEffect(() => {
@@ -56,31 +54,17 @@ export function Modal({
 
   // Animation control (بدون تعقيد زائد)
   useEffect(() => {
-    if (closeTimer.current) {
-      clearTimeout(closeTimer.current)
-      closeTimer.current = null
-    }
+    // trigger animation next frame
+    const frame = requestAnimationFrame(() => setVisible(isOpen))
 
-    if (isOpen) {
-      setMounted(true)
+    if (isOpen) return () => cancelAnimationFrame(frame)
 
-      // trigger animation next frame
-      requestAnimationFrame(() => {
-        setVisible(true)
-      })
-    } else {
-      setVisible(false)
-
-      // انتظر انتهاء الانيميشن قبل unmount
-      closeTimer.current = setTimeout(() => {
-        setMounted(false)
-      }, 250)
-    }
+    // انتظر انتهاء الانيميشن قبل unmount
+    const closeTimer = setTimeout(() => setMounted(false), 250)
 
     return () => {
-      if (closeTimer.current) {
-        clearTimeout(closeTimer.current)
-      }
+      cancelAnimationFrame(frame)
+      clearTimeout(closeTimer)
     }
   }, [isOpen])
 

@@ -1,7 +1,7 @@
 
 
 import { useState, useRef } from 'react'
-import { Modal } from '../../shared/ui/Model'
+import { Modal } from '../../shared/ui/Modal'
 import { LoginForm } from './LoginForm'
 import { RegisterForm } from './RegisterForm'
 

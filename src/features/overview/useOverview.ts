@@ -2,7 +2,7 @@
 
 import { useBodySummary }    from './useBodySummary'
 import { useSleepSummary }   from './useSleepSummary'
-import { useWorkoutSummary } from './useWorkoutSummery'
+import { useWorkoutSummary } from './useWorkoutSummary'
 
 
 export function useOverview() {
@@ -24,7 +24,7 @@ export function useOverview() {
   }
 
   const completedModules = Object.entries(modules)
-    .filter(([ v]) => v)
+    .filter(([, v]) => v)
     .map(([k]) => k)
 
   return {

@@ -1,14 +1,14 @@
 import { useState, useCallback } from 'react'
-import { workoutService } from './WorkoutService'
-import { useWorkoutStore } from './WorkoutStore'
+import { workoutService } from './workoutService'
+import { useWorkoutStore } from './workoutStore'
 
-import { parseWorkoutError } from './WorkoutError'
+import { parseWorkoutError } from './workoutErrors'
 import { handleError } from '../../shared/errors/handleError'
 import { toAppError } from '../../shared/errors/errorUtils'
 import { ERROR_TYPES } from '../../shared/errors/errorTypes'
 import { Toast } from '../../shared/utils/toaster'
 
-import type { WorkoutRequest } from './Workout.types'
+import type { WorkoutRequest } from './workout.types'
 
 export function useWorkout() {
   const { setPrograms, setSelected, clear } = useWorkoutStore()
@@ -44,7 +44,7 @@ export function useWorkout() {
 
       // 🔥 أهم إضافة
       if (!programs.length) {
-        setError('لم يتم العثور على برامج مناسبة')
+        setError('No matching programs found')
         return false
       }
 

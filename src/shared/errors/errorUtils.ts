@@ -1,80 +1,3 @@
-// import axios from 'axios'
-// import { AppError } from './AppError'
-// import { ERROR_TYPES } from './errorTypes'
-
-// export function toAppError(error: unknown): AppError {
-
-//   // أصلاً AppError
-//   if (error instanceof AppError) return error
-
-//   // Axios error
-//   if (axios.isAxiosError(error)) {
-//     const status = error.response?.status
-//     const data = error.response?.data
-
-//     // Network / Timeout
-//     if (!error.response) {
-//       return new AppError({
-//         type: ERROR_TYPES.NETWORK,
-//         message: "تعذر الاتصال بالخادم ",
-//         originalError: error,
-//       })
-//     }
-
-//     // 401
-//     if (status === 401) {
-//       return new AppError({
-//         type: ERROR_TYPES.AUTH,
-//         message: 'انتهت الجلسة، يرجى تسجيل الدخول',
-//         status,
-//         originalError: error,
-//       })
-//     }
-
-//     // 403
-//     if (status === 403) {
-//       return new AppError({
-//         type: ERROR_TYPES.FORBIDDEN,
-//         message: 'ليس لديك صلاحية للوصول',
-//         status,
-//         originalError: error,
-//       })
-//     }
-
-//     // 400 — validation
-//     if (status === 400) {
-//       const field = data ? Object.keys(data)[0] : undefined
-//       const message = field && data[field]
-//         ? data[field][0]
-//         : 'بيانات غير صحيحة'
-
-//       return new AppError({
-//         type: ERROR_TYPES.VALIDATION,
-//         message,
-//         status,
-//         field,
-//         originalError: error,
-//       })
-//     }
-
-//     // 500+
-//     if (status && status >= 500) {
-//       return new AppError({
-//         type: ERROR_TYPES.SERVER,
-//         message: 'خطأ في الخادم، حاول مجدداً',
-//         status,
-//         originalError: error,
-//       })
-//     }
-//   }
-
-//   // Unknown
-//   return new AppError({
-//     type: ERROR_TYPES.UNKNOWN,
-//     message: 'حدث خطأ غير متوقع',
-//     originalError: error,
-//   })}
-
 import axios from 'axios'
 import { AppError } from './AppError'
 import { ERROR_TYPES } from './errorTypes'
@@ -91,7 +14,7 @@ export function toAppError(error: unknown): AppError {
     if (!error.response) {
       return new AppError({
         type: ERROR_TYPES.NETWORK,
-        message: 'لا يمكن الوصول للسيرفر',
+        message: 'Cannot reach the server',
         originalError: error,
       })
     }
@@ -100,7 +23,7 @@ export function toAppError(error: unknown): AppError {
     if (status === 401) {
       return new AppError({
         type: ERROR_TYPES.AUTH,
-        message: 'انتهت الجلسة',
+        message: 'Your session has expired',
         status,
         originalError: error,
       })
@@ -110,7 +33,17 @@ export function toAppError(error: unknown): AppError {
     if (status === 403) {
       return new AppError({
         type: ERROR_TYPES.FORBIDDEN,
-        message: 'ليس لديك صلاحية',
+        message: 'You do not have permission',
+        status,
+        originalError: error,
+      })
+    }
+
+    // 404
+    if (status === 404) {
+      return new AppError({
+        type: ERROR_TYPES.NOT_FOUND,
+        message: 'Not found',
         status,
         originalError: error,
       })
@@ -120,7 +53,7 @@ export function toAppError(error: unknown): AppError {
     if (status === 400) {
       return new AppError({
         type: ERROR_TYPES.VALIDATION,
-        message: 'بيانات غير صحيحة',
+        message: 'Invalid data',
         status,
         originalError: error,
       })
@@ -130,7 +63,7 @@ export function toAppError(error: unknown): AppError {
     if (status && status >= 500) {
       return new AppError({
         type: ERROR_TYPES.SERVER,
-        message: 'السيرفر فيه مشكلة',
+        message: 'Server error',
         status,
         originalError: error,
       })
@@ -139,7 +72,7 @@ export function toAppError(error: unknown): AppError {
 
   return new AppError({
     type: ERROR_TYPES.UNKNOWN,
-    message: 'خطأ غير متوقع',
+    message: 'Unexpected error',
     originalError: error,
   })
 }

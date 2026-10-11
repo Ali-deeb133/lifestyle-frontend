@@ -1,6 +1,5 @@
 import axios, {
   type AxiosInstance,
-  type AxiosRequestConfig,
   type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from "axios";
@@ -9,6 +8,10 @@ import { toAppError } from "../errors/errorUtils";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 const ACCESS_TOKEN_KEY = "access_token";
 const REFRESH_TOKEN_KEY = "refresh_token";
+
+const REFRESH_URL = "/api/accounts/token/refresh/";
+// 401 من هدول معناه بيانات دخول غلط، مو جلسة منتهية → ما في refresh
+const NO_REFRESH_URLS = [REFRESH_URL, "/api/accounts/login/", "/api/accounts/register/"];
 
 export const tokenStorage = {
   getAccess: (): string | null =>
@@ -46,88 +49,84 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject((error))  
+  (error) => Promise.reject((error))
 );
 
-// ─── Refresh Queue ──────────────────────────────────────
-let isRefreshing = false;
-let failedQueue: {
-  resolve: (value: AxiosResponse) => void;
-  reject: (error: unknown) => void;
-}[] = [];
+// ─── Refresh ────────────────────────────────────────────
+// طلب refresh واحد مشترك — كل طلب رجع 401 بينتظره وبعدين بيعيد حاله
+let refreshPromise: Promise<string> | null = null;
+
+function refreshAccessToken(): Promise<string> {
+  if (!refreshPromise) {
+    refreshPromise = axios
+      .post(
+        `${BASE_URL}${REFRESH_URL}`,
+        { refresh: tokenStorage.getRefresh() },
+        { headers: { "Content-Type": "application/json" }, timeout: 15000 }
+      )
+      .then(({ data }) => {
+        const newAccessToken: string = data.access;
+        tokenStorage.setAccess(newAccessToken);
+        // إذا السيرفر بيدوّر الـ refresh token خزّن الجديد
+        if (typeof data.refresh === "string") {
+          tokenStorage.setTokens(newAccessToken, data.refresh);
+        }
+        return newAccessToken;
+      })
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+  return refreshPromise;
+}
+
+function forceLogout(): void {
+  tokenStorage.clearTokens();
+  window.dispatchEvent(new Event("auth:logout"));
+}
 
 // ─── Response Interceptor ───────────────────────────────
 api.interceptors.response.use(
   (response: AxiosResponse): AxiosResponse => response,
 
   async (error) => {
-    const originalRequest = error.config as AxiosRequestConfig & {
-      _retry?: boolean;
-    };
+    const originalRequest = error.config as
+      | (InternalAxiosRequestConfig & { _retry?: boolean })
+      | undefined;
 
     const is401 = error.response?.status === 401;
-    const isRefreshEndpoint = originalRequest.url?.includes(
-      "/api/accounts/token/refresh/"
-    );
-    const alreadyRetried = originalRequest._retry;
+    const url = originalRequest?.url ?? "";
+    const skipRefresh = NO_REFRESH_URLS.some((path) => url.includes(path));
 
-    // مو 401 أو refresh endpoint أو already retried → حول مباشرة
-    if (!is401 || isRefreshEndpoint || alreadyRetried) {
-      return Promise.reject(toAppError(error));  // ← هون
-    }
-
-    // في refresh جاري — حط الطلب بالقائمة
-    if (isRefreshing) {
-      return new Promise<AxiosResponse>((resolve, reject) => {
-        failedQueue.push({ resolve, reject });
-      });
+    // مو 401 أو endpoint بلا refresh أو already retried → حول مباشرة
+    if (!originalRequest || !is401 || skipRefresh || originalRequest._retry) {
+      return Promise.reject(toAppError(error));
     }
 
     originalRequest._retry = true;
-    isRefreshing = true;
-
-    const refreshToken = tokenStorage.getRefresh();
 
     // ما في refresh token → logout
-    if (!refreshToken) {
-      isRefreshing = false;
-      tokenStorage.clearTokens();
-      window.dispatchEvent(new Event("auth:logout"));
-      return Promise.reject(toAppError(error));  // ← هون
+    if (!tokenStorage.getRefresh()) {
+      forceLogout();
+      return Promise.reject(toAppError(error));
     }
 
+    let newAccessToken: string;
     try {
-      const { data } = await axios.post(
-        `${BASE_URL}/api/accounts/token/refresh/`,
-        { refresh: refreshToken },
-        { headers: { "Content-Type": "application/json" } }
-      );
-
-      const newAccessToken: string = data.access;
-      tokenStorage.setAccess(newAccessToken);
-
-      // حل كل الطلبات المعلقة
-      failedQueue.forEach(({ resolve, reject }) => {
-        api(originalRequest).then(resolve).catch(reject);
-      });
-      failedQueue = [];
-
-      if (originalRequest.headers) {
-        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
-      }
-
-      return api(originalRequest);
-
+      newAccessToken = await refreshAccessToken();
     } catch (refreshError) {
-      // refresh فشل → حول الأخطاء المعلقة + logout
-      failedQueue.forEach(({ reject }) => reject(toAppError(refreshError)));  // ← هون
-      failedQueue = [];
-      tokenStorage.clearTokens();
-      window.dispatchEvent(new Event("auth:logout"));
-      return Promise.reject(toAppError(refreshError));  // ← هون
-    } finally {
-      isRefreshing = false;
+      // السيرفر رفض الـ refresh token → logout. مشكلة شبكة/سيرفر → خلي الجلسة
+      const status = axios.isAxiosError(refreshError)
+        ? refreshError.response?.status
+        : undefined;
+      if (status === 400 || status === 401 || status === 403) {
+        forceLogout();
+      }
+      return Promise.reject(toAppError(refreshError));
     }
+
+    originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+    return api(originalRequest);
   }
 );
 

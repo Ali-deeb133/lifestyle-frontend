@@ -1,14 +1,10 @@
-
-
-
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import HeroSection from "../home/HeroSection/HeroSection";
 import FeaturesSection from "../home/FeatureSection";
 
-import { AuthModal } from "../features/auth/AuthModel";
+import { AuthModal } from "../features/auth/AuthModal";
 import { useAuth } from "../features/auth/useAuth";
 
 // toast system (إذا عندك)
@@ -19,16 +15,17 @@ const HomePage: React.FC = () => {
 
   const [isAuthOpen, setIsAuthOpen] = useState(false);
 
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isInitialized } = useAuth();
 
   const handleStart = () => {
-    if (!isAuthenticated) {
-      Toast.error("الرجاء تسجيل الدخول أولاً");
-      // setIsAuthOpen(true); // مهم: ما تتركه ساكت
+    // لسا عم نتحقق من الجلسة → ProtectedRoute بينتظر وبيقرر
+    if (isAuthenticated || !isInitialized) {
+      navigate("/dashboard");
       return;
     }
 
-    navigate("/dashboard");
+    Toast.error("Please log in first");
+    setIsAuthOpen(true);
   };
 
   const handleLogin = () => {

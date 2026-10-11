@@ -1,66 +1,24 @@
-
-
-
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import type { SleepResult, SleepState } from './sleep.types'
+import type { SleepState } from './sleep.types'
 
+// مفتاح النسخة القديمة (شكل بيانات مختلف) — امسح اللي بقي منه
+localStorage.removeItem('sleep-storage-${user.id}')
+
+// النتائج بتنحفظ بالـ localStorage — وبتنمسح عند تسجيل الدخول/الخروج (auth/session.ts)
 export const useSleepStore = create<SleepState>()(
   persist(
     (set) => ({
-      result: null,
-      details: null,
       latest: null,
+      details: null,
 
-      setResult: (result: SleepResult) => set({ result }),
-      setDetails: (details) => set({ details }),
-      setLatest: (latest) => set({ latest }),
+      setAll: (latest, details) => set({ latest, details }),
 
-      clear: () => set({ result: null, details: null, latest: null }),
+      clear: () => set({ latest: null, details: null }),
     }),
     {
-      name: 'sleep-storage-${user.id}', // الاسم الذي سيظهر في localStorage
+      name: 'sleep-storage', // الاسم الذي سيظهر في localStorage
       storage: createJSONStorage(() => localStorage),
-
-      // 🔥 أهم تعديل فعلي
-      partialize: (state) => ({
-        result: state.result,
-        details: state.details,
-        // ❌ لا تخزن latest
-      }),
-
-      version: 1,
     }
   )
 )
-
-
-// import { create } from 'zustand'
-// import { persist, createJSONStorage } from 'zustand/middleware'
-// import { useAuthStore } from '../auth/authStore'
-// import type { SleepState } from './sleep.types'
-
-// const getStorageKey = () => {
-//   const user = useAuthStore.getState().user
-//   return user ? `sleep-storage-${user.id}` : 'sleep-storage-guest'
-// }
-
-// export const useSleepStore = create<SleepState>()(
-//   persist(
-//     (set) => ({
-//       result: null,
-//       details: null,
-//       latest: null,
-
-//       setResult: (result) => set({ result }),
-//       setDetails: (details) => set({ details }),
-//       setLatest: (latest) => set({ latest }),
-
-//       clear: () => set({ result: null, details: null, latest: null }),
-//     }),
-//     {
-//       name: getStorageKey(),
-//       storage: createJSONStorage(() => localStorage),
-//     }
-//   )
-// )

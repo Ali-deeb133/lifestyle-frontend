@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "../src/pages/HomePage";
 import  { Toaster } from "react-hot-toast";
 import { Dashboard } from "./pages/Dashboard";
+import { ProtectedRoute } from "./features/auth/ProtectedRoute";
 
 const Router = () => {
 
@@ -24,7 +25,7 @@ const Router = () => {
         
         
         <Route path="/" element={<HomePage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       </Routes>
       
     </BrowserRouter>

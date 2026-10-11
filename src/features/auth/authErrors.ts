@@ -16,11 +16,11 @@ export function parseAuthError(appError: AppError): string {
   const msg = data.non_field_errors[0]
 
   if (msg === 'Invalid credentials')
-    return 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
+    return 'Incorrect email or password'
 
   return msg
 }
   }
 
-  return 'خطأ في تسجيل الدخول'
+  return 'Something went wrong. Check your details and try again.'
 }

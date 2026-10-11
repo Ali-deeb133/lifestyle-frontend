@@ -1,17 +1,17 @@
 
 import { z } from 'zod'
 export const bodySchema = z.object({
-  birth_date: z.string().min(1, 'أدخل تاريخ الميلاد'),
+  birth_date: z.string().min(1, 'Enter your birth date'),
 
   gender: z.enum(['male', 'female']),
 
-  height: z.number().min(1, 'الطول غير صالح'),
+  height: z.number().min(1, 'Enter a valid height'),
 
-  weight: z.number().min(1, 'الوزن غير صالح'),
+  weight: z.number().min(1, 'Enter a valid weight'),
 
-  neck_circumference: z.number().min(1, 'قياس الرقبة غير صالح'),
+  neck_circumference: z.number().min(1, 'Enter a valid neck measurement'),
 
-  waist_circumference: z.number().min(1, 'قياس الخصر غير صالح'),
+  waist_circumference: z.number().min(1, 'Enter a valid waist measurement'),
 
   hip_circumference: z.number().optional(),
 
@@ -29,7 +29,7 @@ export const bodySchema = z.object({
     if (!data.hip_circumference || data.hip_circumference <= 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'قياس الورك مطلوب',
+        message: 'Hip measurement is required',
         path: ['hip_circumference'],
       })
     }

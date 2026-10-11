@@ -52,12 +52,8 @@ export interface SleepDetails {
 
 // ─── Store State ───────────────────────────────────────
 export interface SleepState {
-  result: SleepResult | null
-  details: SleepDetails | null
   latest: SleepLatest | null
-  setResult: (result: SleepResult) => void
-  setDetails: (details: SleepDetails) => void
-  setLatest: (latest: SleepLatest) => void
- 
+  details: SleepDetails | null
+  setAll: (latest: SleepLatest, details: SleepDetails) => void
   clear: () => void
 }

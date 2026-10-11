@@ -1,5 +1,5 @@
 import api from '../../shared/api/api'
-import type { WorkoutRequest, WorkoutProgram } from './Workout.types'
+import type { WorkoutRequest, WorkoutProgram } from './workout.types'
 
 
 

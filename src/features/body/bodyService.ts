@@ -17,11 +17,6 @@ export const bodyService = {
     return res.data.data
   },
 
-  async getLatestProfile(): Promise<BodyProfile> {
-    const res = await api.get<BodyProfile>('/api/body_profiles/latest/')
-    return res.data
-  },
-
   async calculateMetrics(): Promise<BodyMetrics> {
     const res = await api.post<BodyApiResponse<BodyMetrics>>(
       '/api/body-metrics/calculate/'

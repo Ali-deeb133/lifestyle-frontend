@@ -24,12 +24,12 @@ export class GlobalErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-          <h2 className="text-xl font-semibold">حدث خطأ غير متوقع</h2>
+          <h2 className="text-xl font-semibold">Something went wrong</h2>
           <button
-            className="px-4 py-2 bg-primary text-white rounded-lg"
+            className="px-4 py-2 bg-slate-900 text-white rounded-lg"
             onClick={() => window.location.reload()}
           >
-            إعادة تحميل
+            Reload
           </button>
         </div>
       )

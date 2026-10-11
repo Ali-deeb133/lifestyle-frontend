@@ -1,6 +1,6 @@
 import useVisible from "./hooks/useVisible";
 
-import BodyDashboard from "./dashboards/BodyDashbord";
+import BodyDashboard from "./dashboards/BodyDashboard";
 import SleepDashboard from "./dashboards/SleepDashboard";
 import WorkoutDashboard from "./dashboards/WorkoutDashboard";
 

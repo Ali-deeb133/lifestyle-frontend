@@ -1,9 +1,8 @@
-
-
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware' 
+import { persist, createJSONStorage } from 'zustand/middleware'
 import type { BodyState, BodyProfile, BodyMetrics, RuleBase } from './body.types'
 
+// النتائج بتنحفظ بالـ localStorage — وبتنمسح عند تسجيل الدخول/الخروج (auth/session.ts)
 export const useBodyStore = create<BodyState>()(
   persist(
     (set) => ({
@@ -21,9 +20,7 @@ export const useBodyStore = create<BodyState>()(
     }),
     {
       name: 'body-storage', // الاسم الذي سيظهر في localStorage
-      storage: createJSONStorage(() => localStorage), // تحديد مكان التخزين (اختياري، الافتراضي هو localStorage)
+      storage: createJSONStorage(() => localStorage),
     }
   )
 )
-
-

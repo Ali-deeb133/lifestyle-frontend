@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware' // استيراد الـ middleware
-import type { WorkoutState } from './Workout.types'
+import type { WorkoutState } from './workout.types'
 
 export const useWorkoutStore = create<WorkoutState>()(
   persist(
