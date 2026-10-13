@@ -39,7 +39,7 @@ export function Dashboard() {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex flex-col md:flex-row min-h-dvh bg-slate-50">
 
       <Sidebar
         activeView={activeView}
@@ -62,21 +62,21 @@ export function Dashboard() {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
         {/* Header */}
-        <header className="p-8 pb-4">
-          <h1 className="text-3xl font-black text-slate-800 tracking-tight">{meta.title}</h1>
-          <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wider">{meta.subtitle}</p>
+        <header className="w-full max-w-[1600px] mx-auto px-4 pt-5 pb-3 sm:p-8 sm:pb-4">
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight">{meta.title}</h1>
+          <p className="text-xs sm:text-sm font-medium text-slate-500 mt-1 uppercase tracking-wider">{meta.subtitle}</p>
         </header>
 
         {/* Body */}
         {activeView === 'body' && (
-          <div className="flex flex-col lg:flex-row gap-8 p-8 pt-0 items-start">
-            <div className="w-full lg:w-[380px] lg:sticky lg:top-8 flex-shrink-0">
-              <div className="rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/50">
+          <div className="w-full max-w-[1600px] mx-auto flex flex-col xl:flex-row gap-5 sm:gap-8 px-4 pb-24 sm:px-8 md:pb-8 items-start">
+            <div className="w-full xl:w-[380px] xl:sticky xl:top-8 flex-shrink-0">
+              <div className="rounded-3xl sm:rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/50">
                 <BodyForm onSuccess={() => {}} />
               </div>
             </div>
-            <div className="w-full lg:flex-1 min-w-0">
-              <div className="rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/60 bg-white">
+            <div className="w-full xl:flex-1 min-w-0">
+              <div className="rounded-3xl sm:rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/60 bg-white">
                 <BodyDashboard />
               </div>
             </div>
@@ -85,9 +85,9 @@ export function Dashboard() {
 
         {/* Overview */}
          {activeView === 'overview' && (
-          <div className="flex flex-col lg:flex-row gap-8 p-8 pt-0 items-start">
-            <div className="w-full lg:flex-1 min-w-0">
-              <div className="rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/60 bg-white">
+          <div className="w-full max-w-[1600px] mx-auto flex flex-col xl:flex-row gap-5 sm:gap-8 px-4 pb-24 sm:px-8 md:pb-8 items-start">
+            <div className="w-full xl:flex-1 min-w-0">
+              <div className="rounded-3xl sm:rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/60 bg-white">
                 <OverviewDashboard />
               </div>
             </div>
@@ -96,14 +96,14 @@ export function Dashboard() {
 
         {/* Sleep */}
         {activeView === 'sleep' && (
-          <div className="flex flex-col lg:flex-row gap-8 p-8 pt-0 items-start">
-            <div className="w-full lg:w-[380px] lg:sticky lg:top-8 flex-shrink-0">
-              <div className="rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/50">
+          <div className="w-full max-w-[1600px] mx-auto flex flex-col xl:flex-row gap-5 sm:gap-8 px-4 pb-24 sm:px-8 md:pb-8 items-start">
+            <div className="w-full xl:w-[380px] xl:sticky xl:top-8 flex-shrink-0">
+              <div className="rounded-3xl sm:rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/50">
                 <SleepForm onSuccess={() => {}} />
               </div>
             </div>
-            <div className="w-full lg:flex-1 min-w-0">
-              <div className="rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/60 bg-white">
+            <div className="w-full xl:flex-1 min-w-0">
+              <div className="rounded-3xl sm:rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/60 bg-white">
                 <SleepDashboard />
               </div>
             </div>
@@ -112,14 +112,14 @@ export function Dashboard() {
 
         {/* Workout */}
          {activeView === 'workout' && (
-          <div className="flex flex-col lg:flex-row gap-8 p-8 pt-0 items-start">
-            <div className="w-full lg:w-[380px] lg:sticky lg:top-8 flex-shrink-0">
-              <div className="rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/50">
+          <div className="w-full max-w-[1600px] mx-auto flex flex-col xl:flex-row gap-5 sm:gap-8 px-4 pb-24 sm:px-8 md:pb-8 items-start">
+            <div className="w-full xl:w-[380px] xl:sticky xl:top-8 flex-shrink-0">
+              <div className="rounded-3xl sm:rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/50">
                 <WorkoutForm onSuccess={() => {}} />
               </div>
             </div>
-            <div className="w-full lg:flex-1 min-w-0">
-              <div className="rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/60 bg-white">
+            <div className="w-full xl:flex-1 min-w-0">
+              <div className="rounded-3xl sm:rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/60 bg-white">
                 <WorkoutDashboard />
               </div>
             </div>

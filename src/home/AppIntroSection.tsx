@@ -38,10 +38,10 @@ const AppIntroSection: React.FC = () => {
   ];
 
   return (
-    <div ref={ref} className="max-w-5xl mx-auto px-4 py-16">
+    <div ref={ref} className="max-w-5xl mx-auto sm:px-4 py-8 md:py-16">
       {/* Headline */}
       <div
-        className="text-center mb-16"
+        className="text-center mb-10 md:mb-16"
         style={{
           opacity: visible ? 1 : 0,
           transform: visible ? "translateY(0)" : "translateY(20px)",

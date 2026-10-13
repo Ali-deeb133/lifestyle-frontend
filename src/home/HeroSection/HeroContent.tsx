@@ -17,11 +17,11 @@ const HeroContent: React.FC<Props> = ({ onGetStarted, onLoginClick }) => {
   };
 
   return (
-    <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-4xl mx-auto">
+    <div className="relative z-10 flex flex-col items-center text-center px-5 sm:px-6 py-16 max-w-4xl mx-auto">
 
       {/* Badge */}
       <div className="hero-item mb-6" style={{ animationDelay: "0.1s" }}>
-        <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-500/40 bg-cyan-500/10 text-cyan-300 text-xs font-semibold tracking-widest uppercase backdrop-blur-sm">
+        <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-500/40 bg-cyan-500/10 text-cyan-300 text-[10px] sm:text-xs font-semibold tracking-widest uppercase backdrop-blur-sm">
           <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
           AI-Powered Health Intelligence
         </span>
@@ -29,11 +29,11 @@ const HeroContent: React.FC<Props> = ({ onGetStarted, onLoginClick }) => {
 
       {/* Title */}
       <h1 className="hero-item font-extrabold leading-tight mb-4" style={{ animationDelay: "0.25s" }}>
-        <span className="block text-white text-5xl md:text-7xl tracking-tight drop-shadow-lg">
+        <span className="block text-white text-4xl sm:text-5xl md:text-7xl tracking-tight drop-shadow-lg">
           Your Body.
         </span>
         <span
-          className="block text-5xl md:text-7xl tracking-tight"
+          className="block text-4xl sm:text-5xl md:text-7xl tracking-tight"
           style={{
             background: "linear-gradient(90deg, #22d3ee, #34d399, #06b6d4)",
             WebkitBackgroundClip: "text",
@@ -45,20 +45,20 @@ const HeroContent: React.FC<Props> = ({ onGetStarted, onLoginClick }) => {
       </h1>
 
       {/* Description */}
-      <p className="hero-item text-slate-300 text-lg md:text-xl mb-3" style={{ animationDelay: "0.4s" }}>
+      <p className="hero-item text-slate-300 text-base sm:text-lg md:text-xl mb-3" style={{ animationDelay: "0.4s" }}>
         Track your body metrics, sleep quality, and fitness — all in one intelligent dashboard.
       </p>
 
-      <p className="hero-item text-slate-400 text-sm md:text-base mb-10" style={{ animationDelay: "0.5s" }}>
+      <p className="hero-item text-slate-400 text-xs sm:text-sm md:text-base mb-8 sm:mb-10" style={{ animationDelay: "0.5s" }}>
         BMI · BMR · TDEE · Sleep Efficiency · Smart Workout Plans
       </p>
 
       {/* CTA */}
-      <div className="hero-item flex gap-4" style={{ animationDelay: "0.65s" }}>
+      <div className="hero-item flex flex-wrap justify-center gap-3 sm:gap-4" style={{ animationDelay: "0.65s" }}>
         
         <button
           onClick={onGetStarted}
-          className="group px-10 py-4 rounded-full font-bold text-black"
+          className="group px-8 sm:px-10 py-3.5 sm:py-4 rounded-full font-bold text-black"
           style={{ background: "linear-gradient(135deg,#22d3ee,#34d399)" }}
         >
           Analyze
@@ -67,7 +67,7 @@ const HeroContent: React.FC<Props> = ({ onGetStarted, onLoginClick }) => {
         {isAuthenticated ? (
           <button
             onClick={() => setShowLogoutModal(true)}
-            className="group px-10 py-4 rounded-full font-bold text-black"
+            className="group px-8 sm:px-10 py-3.5 sm:py-4 rounded-full font-bold text-black"
             style={{ background: "linear-gradient(135deg, #f87171, #ef4444)" }}
           >
             Logout
@@ -75,7 +75,7 @@ const HeroContent: React.FC<Props> = ({ onGetStarted, onLoginClick }) => {
         ) : (
           <button
             onClick={onLoginClick}
-            className="group px-10 py-4 rounded-full font-bold text-black"
+            className="group px-8 sm:px-10 py-3.5 sm:py-4 rounded-full font-bold text-black"
             style={{ background: "linear-gradient(135deg, #22d3ee, #34d399)" }}
           >
             Login
@@ -85,11 +85,11 @@ const HeroContent: React.FC<Props> = ({ onGetStarted, onLoginClick }) => {
 
       {/* MODAL */}
       {showLogoutModal && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 animate-fade-in">
+  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 animate-fade-in">
 
     <div
       className="
-        w-[280px]
+        w-full max-w-[280px]
         rounded-3xl
         border border-white/10
         bg-slate-900/95

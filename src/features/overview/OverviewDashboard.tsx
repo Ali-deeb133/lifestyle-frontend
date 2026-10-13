@@ -304,7 +304,7 @@ export function OverviewDashboard() {
   if (!healthScore) return <EmptyState />
 
   return (
-    <div className="min-h-screen bg-slate-900 text-black p-6 flex justify-center"
+    <div className="@container min-h-screen bg-slate-900 text-black p-4 sm:p-6 flex justify-center"
       style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
 
       {/* Ambient background */}
@@ -325,7 +325,7 @@ export function OverviewDashboard() {
       <div className="relative w-full max-w-3xl flex flex-col gap-5">
 
         {/* ── Header ── */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-[10px] text-slate-600 uppercase tracking-[0.3em] mb-1">
               Health OS · Overview
@@ -340,7 +340,7 @@ export function OverviewDashboard() {
         </div>
 
         {/* ── Hero ── */}
-        <div className="relative overflow-hidden rounded-3xl p-6"
+        <div className="relative overflow-hidden rounded-3xl p-5 @2xl:p-6"
           style={{
             background: 'linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(139,92,246,0.05) 50%, rgba(16,185,129,0.05) 100%)',
             border: '1px solid rgba(255,255,255,0.08)',
@@ -352,10 +352,10 @@ export function OverviewDashboard() {
           <div className="absolute bottom-0 right-0 w-48 h-48 rounded-full opacity-10"
             style={{ background: 'radial-gradient(circle, #10b981, transparent)', transform: 'translate(30%,30%)' }} />
 
-          <div className="relative z-10 flex items-center gap-8">
+          <div className="relative z-10 flex flex-col @2xl:flex-row items-center gap-6 @2xl:gap-8">
             <HealthScoreRing score={healthScore} />
 
-            <div className="flex-1 flex flex-col gap-5">
+            <div className="w-full @2xl:w-auto flex-1 min-w-0 flex flex-col gap-5">
               {/* Module scores */}
               <div className="flex flex-col gap-3">
                 {[
@@ -400,7 +400,7 @@ export function OverviewDashboard() {
         </div>
 
         {/* ── Stat Chips ── */}
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 @2xl:grid-cols-4 gap-3">
           {body && (
             <StatChip icon="⚖️" label="BMI Index"
               value={body.bmi.toFixed(1)} color="#22d3ee" delay={100} />
@@ -420,7 +420,7 @@ export function OverviewDashboard() {
         </div>
 
         {/* ── Module Panels ── */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 @2xl:grid-cols-3 gap-4">
           {body && (
             <ModulePanel
               icon="◎" title="Body Metrics"

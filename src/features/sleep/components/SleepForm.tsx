@@ -73,7 +73,7 @@ export function SleepForm({ onSuccess }: { onSuccess: () => void }) {
       <ErrorMessage message={validationError || serverError} />
 
       {/* Inputs */}
-      <div className="grid grid-cols-2 gap-x-4 gap-y-5">
+      <div className="grid grid-cols-2 gap-x-3 sm:gap-x-4 gap-y-5 items-end">
         <Input
           label="Sleep Duration (Hours)"
           type="number"
@@ -132,7 +132,7 @@ export function SleepForm({ onSuccess }: { onSuccess: () => void }) {
       <div className="flex flex-col gap-3 p-4 rounded-2xl border border-white/5 bg-white/[0.02]">
         <div className="flex items-center justify-between">
           
-          <span className="text-[20px] text-slate-500 uppercase tracking-widest font-mono">
+          <span className="text-base sm:text-[20px] text-slate-500 uppercase tracking-widest font-mono">
             Smoking Status :
           </span>
         </div>

@@ -102,7 +102,7 @@ export function BodyForm({ onSuccess }: BodyFormProps) {
           onChange={(e) => update('birth_date', e.target.value)}
         />
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 items-end">
           <Input
             label="Height (cm)"
             type="number"
@@ -122,7 +122,7 @@ export function BodyForm({ onSuccess }: BodyFormProps) {
         </div>
 
         {/* قياسات المحيط - بجانب بعضها لتقليل الطول */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 items-end">
           <Input
             label="Neck Circumference (cm)"
             type="number"

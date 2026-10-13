@@ -42,12 +42,12 @@ function CircularMeter({ value, max, label, unit, color, gradientId, size = 120 
 
   return (
     <div className="flex flex-col items-center group cursor-default">
-      <div className="relative mb-3" style={{ width: size, height: size }}>
+      <div className="relative mb-3 w-full aspect-square" style={{ maxWidth: size }}>
         {/* Glow Effect (Very Subtle) */}
         <div className="absolute inset-0 rounded-full blur-xl opacity-10 transition-opacity group-hover:opacity-20"
              style={{ backgroundColor: color[0] }}></div>
 
-        <svg width={size} height={size} className="-rotate-90 relative z-10">
+        <svg viewBox={`0 0 ${size} ${size}`} className="-rotate-90 relative z-10 w-full h-full">
           <defs>
             <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor={color[0]} />
@@ -103,19 +103,19 @@ export function BodyDashboard() {
   ];
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden bg-slate-50 min-h-[600px] flex flex-col"
+    <div className="@container w-full p-5 sm:p-8 rounded-3xl sm:rounded-[2.5rem] shadow-2xl relative overflow-hidden bg-slate-50 min-h-[600px] flex flex-col"
          style={{ backgroundImage: `url(${bodyBg})`, backgroundSize: 'cover', backgroundPosition: ' top center' }}>
       
       {/* طبقة التدرج اللوني لضمان وضوح النصوص (Overlay) */}
-      <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-white/10"></div>
+      <div className="absolute inset-0 bg-white/85 @xl:bg-white/0 @xl:bg-gradient-to-r from-white/95 via-white/80 to-white/10"></div>
 
       {/* Header */}
-      <div className="relative flex justify-between items-start mb-10">
+      <div className="relative flex justify-between items-start gap-4 mb-8 sm:mb-10">
         <div className="space-y-1">
           <h2 className="text-2xl font-black text-slate-900 tracking-tight uppercase">Body Metrics</h2>
           <p className="text-xs font-bold text-indigo-500 uppercase tracking-widest">{ruleBase.primary_pattern}</p>
         </div>
-        <div className="flex flex-col gap-2 items-end">
+        <div className="flex flex-col gap-2 items-end text-right">
           <span className="px-3 py-1 rounded-lg bg-indigo-50 text-indigo-600 text-[10px] font-black border border-indigo-100 shadow-sm uppercase">
             {ruleBase.bmi_category}
           </span>
@@ -126,13 +126,13 @@ export function BodyDashboard() {
       </div>
 
       {/* Meters Grid - زيادة المسافات (Gap) */}
-      <div className="relative grid grid-cols-2 md:grid-cols-4 gap-y-12 gap-x-8 mb-12">
+      <div className="relative grid grid-cols-2 @lg:grid-cols-4 gap-y-8 gap-x-4 @xl:gap-y-12 @xl:gap-x-8 mb-10 @xl:mb-12">
         {meters.map((m) => <CircularMeter key={m.id} {...m} gradientId={m.id} />)}
       </div>
 
       {/* Pills & Insights Footer */}
       <div className="relative mt-auto space-y-4">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 @md:grid-cols-3 gap-3">
           <StatusPill label="Metabolism" value={ruleBase.metabolic_status} />
           <StatusPill label="BFP Category" value={ruleBase.bfp_category} />
           <StatusPill label="Segment" value={ruleBase.segment} />

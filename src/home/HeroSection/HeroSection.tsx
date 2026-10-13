@@ -14,7 +14,7 @@ const HeroSection: React.FC<Props> = ({ onGetStarted, onLoginClick }) => {
   useParticles(canvasRef);
 
   return (
-    <section className="relative min-h-screen w-full overflow-hidden flex items-center justify-center">
+    <section className="relative min-h-dvh w-full overflow-hidden flex items-center justify-center">
 
       {/* Background Image */}
       <div

@@ -39,7 +39,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             className={`
               w-full bg-white border rounded-xl
-              px-4 py-2.5 text-sm text-slate-800
+              px-4 py-2.5 text-base md:text-sm text-slate-800
               placeholder:text-slate-300
               transition-all duration-200
               outline-none

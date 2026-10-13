@@ -35,7 +35,7 @@ function SimilarityBar({ value }: { value: number }) {
  */
 function ExerciseItem({ ex }: { ex: Exercise }) {
   return (
-    <div className="group flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-100 hover:border-indigo-200 hover:shadow-md hover:shadow-indigo-50/50 transition-all duration-300">
+    <div className="group flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl bg-white border border-slate-100 hover:border-indigo-200 hover:shadow-md hover:shadow-indigo-50/50 transition-all duration-300">
       {/* الخط الجانبي الجمالي */}
       <div className="w-1.5 h-12 bg-slate-100 group-hover:bg-indigo-400 rounded-full transition-colors" />
       
@@ -78,11 +78,11 @@ export function WorkoutDashboard() {
   const currentDay = daysInWeek.includes(activeDay) ? activeDay : daysInWeek[0]
 
   return (
-    <div className="flex flex-col gap-10 w-full max-w-6xl mx-auto p-6 bg-gradient-to-br from-sky-50 via-white to-sky-50 min-h-screen font-sans">
+    <div className="@container flex flex-col gap-8 sm:gap-10 w-full max-w-6xl mx-auto p-4 sm:p-6 bg-gradient-to-br from-sky-50 via-white to-sky-50 min-h-screen font-sans">
       
       {/* --- القسم العلوي: اختيار البرنامج التدريبي --- */}
       <section className="space-y-6">
-        <div className="flex items-end justify-between px-2">
+        <div className="flex flex-wrap items-end justify-between gap-3 px-2">
           <div className="flex items-center gap-3">
             <div className="p-3 bg-indigo-300 rounded-2xl shadow-xl shadow-indigo-200">
               <Dumbbell size={24} className="text-white" />
@@ -95,7 +95,7 @@ export function WorkoutDashboard() {
           <Badge label={`${programs.length} Programs`} />
         </div>
 
-        <div className="flex gap-5 overflow-x-auto pb-6 no-scrollbar -mx-2 px-2">
+        <div className="flex gap-4 sm:gap-5 overflow-x-auto snap-x pb-6 pt-2 no-scrollbar -mx-2 px-2">
           {programs.map((prog) => {
             const isSelected = selected.title === prog.title
             return (
@@ -103,7 +103,7 @@ export function WorkoutDashboard() {
                 key={prog.title}
                 onClick={() => { setSelected(prog); setActiveWeek(1); setActiveDay(1); }}
                 className={`
-                  relative flex-shrink-0 w-72 p-6 rounded-[2rem] border transition-all duration-500 flex flex-col text-right box-border
+                  relative flex-shrink-0 snap-start w-64 sm:w-72 p-5 sm:p-6 rounded-[2rem] border transition-all duration-500 flex flex-col text-left box-border
                   ${isSelected
                     ? 'bg-white border-indigo-300 shadow-2xl shadow-indigo-100 ring-2 ring-indigo-50 scale-[1.02]'
                     : 'bg-white/60 border-slate-100 hover:border-slate-300'
@@ -134,12 +134,12 @@ export function WorkoutDashboard() {
       </section>
 
       {/* --- القسم السفلي: التفاصيل والتمارين --- */}
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <section className="grid grid-cols-1 @4xl:grid-cols-12 gap-6 @4xl:gap-8 items-start">
         
         {/* التحكم الجانبي (الأيام والأسابيع) */}
-        <div className="lg:col-span-4 flex flex-col gap-6">
-          <Card className="p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm shadow-slate-100/50">
-             <div className="flex items-center gap-3 mb-8">
+        <div className="@4xl:col-span-4 flex flex-col gap-6">
+          <Card className="p-5 sm:p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm shadow-slate-100/50">
+             <div className="flex items-center gap-3 mb-6 sm:mb-8">
                 <div className="w-1.5 h-6 bg-indigo-400 rounded-full" />
                 <span className="text-sm font-black text-slate-900 uppercase tracking-tighter">Time Table</span>
              </div>
@@ -164,12 +164,12 @@ export function WorkoutDashboard() {
                </div>
              </div>
 
-             <div className="h-px bg-slate-100 my-8" />
+             <div className="h-px bg-slate-100 my-6 sm:my-8" />
 
              {/* اختيار اليوم */}
              <div className="space-y-4">
                <label className="text-[11px] text-slate-400 font-black uppercase tracking-[0.1em]">Day</label>
-               <div className="grid grid-cols-2 gap-3">
+               <div className="grid grid-cols-2 @sm:grid-cols-4 @4xl:grid-cols-2 gap-3">
                  {daysInWeek.map(d => (
                    <button
                      key={d}
@@ -189,8 +189,8 @@ export function WorkoutDashboard() {
         </div>
 
         {/* عرض قائمة التمارين */}
-        <div className="lg:col-span-8 space-y-6">
-           <div className="flex items-center justify-between px-3">
+        <div className="@4xl:col-span-8 space-y-6 min-w-0">
+           <div className="flex flex-wrap items-center justify-between gap-2 px-1 sm:px-3">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-indigo-500 shadow-sm">
                   <Calendar size={20} />
@@ -202,7 +202,7 @@ export function WorkoutDashboard() {
               </div>
            </div>
            
-           <div className="grid grid-cols-1 gap-3 overflow-y-auto max-h-[650px] pr-2 custom-scrollbar">
+           <div className="grid grid-cols-1 gap-3 @4xl:overflow-y-auto @4xl:max-h-[650px] @4xl:pr-2 custom-scrollbar">
              {selected.exercises
                .filter(e => e.week === currentWeek && e.day === currentDay)
                .map((ex, i) => (

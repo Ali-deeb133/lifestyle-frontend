@@ -143,7 +143,7 @@ export function WorkoutForm({ onSuccess }: WorkoutFormProps) {
               type="button"
               onClick={() => update('equipment', eq.value)}
               className={`
-                flex items-center justify-between px-4 py-2.5 rounded-xl border text-sm
+                flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl border text-sm text-left
                 transition-all duration-200
                 ${form.equipment === eq.value
                   ? 'bg-violet-500/15 border-violet-500/40 text-violet-700'
@@ -152,7 +152,7 @@ export function WorkoutForm({ onSuccess }: WorkoutFormProps) {
               `}
             >
               <span className="font-medium">{eq.label}</span>
-              <span className="text-xs opacity-60">{eq.desc}</span>
+              <span className="text-xs opacity-60 text-right">{eq.desc}</span>
             </button>
           ))}
         </div>

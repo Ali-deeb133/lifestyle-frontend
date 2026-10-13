@@ -85,7 +85,7 @@ export function Modal({
       {/* Panel */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`relative w-full ${sizes[size]} bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl shadow-black/50`}
+        className={`relative w-full ${sizes[size]} max-h-[calc(100dvh-2rem)] overflow-y-auto bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl shadow-black/50`}
         style={{
           opacity: visible ? 1 : 0,
           transform: visible

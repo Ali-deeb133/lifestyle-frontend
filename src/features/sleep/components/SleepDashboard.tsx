@@ -23,7 +23,7 @@ export function SleepDashboard() {
   const factors = details.factors_analysis
 
   // إعدادات الدولاب (Circle Settings)
-  const radius = 70;
+  const radius = 90;
   const stroke = 8;
   const normalizedRadius = radius - stroke * 2;
   const circumference = normalizedRadius * 2 * Math.PI;
@@ -31,7 +31,7 @@ export function SleepDashboard() {
 
   return (
     <div 
-      className="min-h-screen w-full bg-cover bg-center bg-no-repeat flex items-center justify-center p-4"
+      className="@container min-h-screen w-full bg-cover bg-center bg-no-repeat flex items-center justify-center p-4"
       style={{ 
         // ضع رابط صورتك هنا
         backgroundImage: `url(${sleepBg})`,
@@ -39,10 +39,10 @@ export function SleepDashboard() {
     >
      
 
-      <div className="relative z-10 w-full max-w-4xl grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="relative z-10 w-full max-w-4xl grid grid-cols-1 @3xl:grid-cols-12 gap-4 @3xl:gap-6">
         
         {/* القسم الأيسر: الدولاب (Hero Section) */}
-        <div className="lg:col-span-5 bg-black/30 backdrop-blur-md border border-white/10 rounded-[2rem] p-10 flex flex-col items-center justify-center shadow-2xl">
+        <div className="@3xl:col-span-5 bg-black/30 backdrop-blur-md border border-white/10 rounded-[2rem] p-6 @sm:p-10 flex flex-col items-center justify-center shadow-2xl">
           <div className="relative">
             <svg height={radius * 2} width={radius * 2} className="transform -rotate-90">
               {/* الدائرة الخلفية */}
@@ -85,7 +85,7 @@ export function SleepDashboard() {
         </div>
 
         {/* القسم الأيمن: العوامل (Factors Grid) */}
-        <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="@3xl:col-span-7 grid grid-cols-1 @sm:grid-cols-2 gap-4">
           {Object.entries(factors).map(([key, factor]) => {
             const config = factorConfig[key]
             if (!config) return null
@@ -93,7 +93,7 @@ export function SleepDashboard() {
 
             return (
               <div key={key} className="bg-white/5 backdrop-blur-lg border border-white/10 p-6 rounded-2xl flex flex-col justify-between hover:bg-white/10 transition-all group">
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between items-start gap-2">
                   <div className={`p-2.5 rounded-xl bg-black/20 ${config.color}`}>
                     <Icon size={20} strokeWidth={1.5} />
                   </div>
