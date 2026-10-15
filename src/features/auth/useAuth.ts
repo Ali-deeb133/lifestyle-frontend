@@ -9,12 +9,14 @@ import { ERROR_TYPES } from '../../shared/errors/errorTypes'
 import type { LoginCredentials, RegisterCredentials } from './auth.types'
 import { Toast } from '../../shared/utils/toaster'
 import { handleError } from '../../shared/errors/handleError'
+import { useSlowServerHint } from '../../shared/hooks/useSlowServerHint'
 
 export function useAuth() {
   const { setUser, user, isInitialized } = useAuthStore()
 
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  useSlowServerHint(loading)
 
   const isAuthenticated = !!user
 

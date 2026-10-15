@@ -1,4 +1,5 @@
 import axios, {
+  type AxiosError,
   type AxiosInstance,
   type AxiosResponse,
   type InternalAxiosRequestConfig,
@@ -12,6 +13,24 @@ const REFRESH_TOKEN_KEY = "refresh_token";
 const REFRESH_URL = "/api/accounts/token/refresh/";
 // 401 من هدول معناه بيانات دخول غلط، مو جلسة منتهية → ما في refresh
 const NO_REFRESH_URLS = [REFRESH_URL, "/api/accounts/login/", "/api/accounts/register/"];
+// توكن قديم/غلط بالـ localStorage ما لازم يسبب 401 عالدخول أو التسجيل → بلا Authorization
+const NO_AUTH_URLS = ["/api/accounts/login/", "/api/accounts/register/"];
+
+// ─── Cold Start Retry Config ────────────────────────────
+// السيرفر نايم (Render free tier) → الطلب بيرجع بلا response
+// - اتصال مرفوض/مقطوع: الطلب ما وصل للتطبيق → أي method بتتعاد لحد MAX_RETRIES
+// - timeout: يمكن السيرفر لسا عم يعالج الطلب → بس GET/HEAD بتتعاد،
+//   والكتابة بتاخد محاولة وحدة طويلة (WRITE_TIMEOUT) لتفادي التكرار
+// - المتصفح offline: بلا إعادة، الخطأ بيطلع فوراً
+const TIMEOUT = 15_000;
+const MAX_RETRIES = 5;
+const RETRY_DELAY = 4_000;
+const WRITE_TIMEOUT = 75_000; // الـ cold start تقريباً دقيقة
+
+const isReadOnly = (config: InternalAxiosRequestConfig) =>
+  ["get", "head"].includes((config.method ?? "get").toLowerCase());
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const tokenStorage = {
   getAccess: (): string | null =>
@@ -37,16 +56,24 @@ export const tokenStorage = {
 const api: AxiosInstance = axios.create({
   baseURL: BASE_URL,
   headers: { "Content-Type": "application/json" },
-  timeout: 15000,
+  timeout: TIMEOUT,
 });
 
 // ─── Request Interceptor ────────────────────────────────
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
     const token = tokenStorage.getAccess();
-    if (token && config.headers) {
+    const skipAuth = NO_AUTH_URLS.some((path) => (config.url ?? "").includes(path));
+    if (token && config.headers && !skipAuth) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // Cold start: طلبات الكتابة بتاخد محاولة وحدة طويلة بدل الإعادة
+    // بس إذا الطلب ما حدد timeout خاص فيه
+    if (!isReadOnly(config) && config.timeout === TIMEOUT) {
+      config.timeout = WRITE_TIMEOUT;
+    }
+
     return config;
   },
   (error) => Promise.reject((error))
@@ -89,10 +116,30 @@ function forceLogout(): void {
 api.interceptors.response.use(
   (response: AxiosResponse): AxiosResponse => response,
 
-  async (error) => {
+  async (error: AxiosError) => {
     const originalRequest = error.config as
-      | (InternalAxiosRequestConfig & { _retry?: boolean })
+      | (InternalAxiosRequestConfig & {
+          _retry?: boolean; // الـ refresh عند 401
+          _retryCount?: number; // إعادة الـ cold start
+        })
       | undefined;
+
+    // ─── Cold Start Retry ───
+    // !error.response → السيرفر ما رد أبداً (نايم/مرفوض/مقطوع)، عكس 401 أو 400
+    const isNetworkError = !error.response;
+    const isOffline = typeof navigator !== "undefined" && navigator.onLine === false;
+
+    if (isNetworkError && originalRequest && !isOffline && !axios.isCancel(error)) {
+      const isTimeout = error.code === "ECONNABORTED" || error.code === "ETIMEDOUT";
+      const maxRetries = isTimeout && !isReadOnly(originalRequest) ? 0 : MAX_RETRIES;
+
+      originalRequest._retryCount = (originalRequest._retryCount ?? 0) + 1;
+
+      if (originalRequest._retryCount <= maxRetries) {
+        await wait(RETRY_DELAY);
+        return api(originalRequest);
+      }
+    }
 
     const is401 = error.response?.status === 401;
     const url = originalRequest?.url ?? "";

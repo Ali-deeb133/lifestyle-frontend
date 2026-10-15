@@ -7,6 +7,7 @@ import { handleError } from '../../shared/errors/handleError'
 import { toAppError } from '../../shared/errors/errorUtils'
 import { ERROR_TYPES } from '../../shared/errors/errorTypes'
 import { Toast } from '../../shared/utils/toaster'
+import { useSlowServerHint } from '../../shared/hooks/useSlowServerHint'
 
 import type { SleepRequest } from './sleep.types'
 
@@ -15,6 +16,9 @@ export function useSleep() {
 
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  // جلب آخر نتيجة — منفصل عن loading تبع الفورم
+  const [loadingLatest, setLoadingLatest] = useState(false)
+  useSlowServerHint(loading || loadingLatest)
 
   const handleErr = (err: unknown) => {
     const appError = toAppError(err)
@@ -32,6 +36,7 @@ export function useSleep() {
 
   // 📦 جلب آخر نتيجة محفوظة عالسيرفر
   const loadLatest = useCallback(async (): Promise<void> => {
+    setLoadingLatest(true)
     try {
       const [latest, details] = await Promise.all([
         sleepService.getLatest(),
@@ -49,6 +54,8 @@ export function useSleep() {
 
       const msg = handleError(appError)
       if (msg) Toast.error(msg)
+    } finally {
+      setLoadingLatest(false)
     }
   }, [setAll, clear])
 
@@ -81,6 +88,7 @@ export function useSleep() {
   return {
     submitSleep,
     loadLatest,
+    loadingLatest,
     error,
     loading,
   }

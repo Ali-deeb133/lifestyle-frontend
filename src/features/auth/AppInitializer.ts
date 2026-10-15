@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuthStore } from './authStore'
 import { authService } from './authService'
 import { resetSession } from './session'
@@ -7,8 +7,13 @@ import { toAppError } from '../../shared/errors/errorUtils'
 import { handleError } from '../../shared/errors/handleError'
 import { ERROR_TYPES } from '../../shared/errors/errorTypes'
 import { Toast } from '../../shared/utils/toaster'
+import { useSlowServerHint } from '../../shared/hooks/useSlowServerHint'
 
 export function AppInitializer() {
+  // /me ممكن ياخد لحد ~110 ثانية إذا السيرفر عم يصحى
+  const [checking, setChecking] = useState(false)
+  useSlowServerHint(checking)
+
   useEffect(() => {
     const { setUser, setInitialized } = useAuthStore.getState()
 
@@ -21,6 +26,7 @@ export function AppInitializer() {
         return
       }
 
+      setChecking(true)
       try {
         const user = await authService.me()
         setUser(user)
@@ -36,6 +42,8 @@ export function AppInitializer() {
         setInitialized()
         const message = handleError(appError)
         if (message) Toast.error(message)
+      } finally {
+        setChecking(false)
       }
     }
 

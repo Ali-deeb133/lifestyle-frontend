@@ -7,6 +7,7 @@ import { handleError } from '../../shared/errors/handleError'
 import { toAppError } from '../../shared/errors/errorUtils'
 import { ERROR_TYPES } from '../../shared/errors/errorTypes'
 import { Toast } from '../../shared/utils/toaster'
+import { useSlowServerHint } from '../../shared/hooks/useSlowServerHint'
 
 import type { WorkoutRequest } from './workout.types'
 
@@ -15,6 +16,7 @@ export function useWorkout() {
 
   const [error, setError]     = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  useSlowServerHint(loading)
 
   const handleErr = (err: unknown) => {
     const appError = toAppError(err)

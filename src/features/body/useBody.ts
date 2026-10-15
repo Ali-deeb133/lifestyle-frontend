@@ -7,6 +7,7 @@ import { toAppError } from '../../shared/errors/errorUtils'
 import { handleError } from '../../shared/errors/handleError'
 import { ERROR_TYPES } from '../../shared/errors/errorTypes'
 import { Toast } from '../../shared/utils/toaster'
+import { useSlowServerHint } from '../../shared/hooks/useSlowServerHint'
 
 import type { BodyProfileRequest } from './body.types'
 
@@ -16,6 +17,7 @@ export function useBody() {
   const [error, setError] = useState<string | null>(null)
   const [warnings, setWarnings] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
+  useSlowServerHint(loading)
 
   // 🔥 pipeline كامل (atomic)
   async function submitBodyData(data: BodyProfileRequest): Promise<boolean> {

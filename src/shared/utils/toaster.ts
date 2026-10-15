@@ -29,8 +29,9 @@ export const Toast = {
       },
     }),
 
-  info: (message: string) =>
+  info: (message: string, options?: { id?: string; duration?: number }) =>
     toast(message, {
+      ...options,
       style: {
         ...baseStyle,
         background: 'rgba(34, 211, 238, 0.1)',
@@ -38,6 +39,8 @@ export const Toast = {
         color: '#67e8f9',
       },
     }),
+
+  dismiss: (id?: string) => toast.dismiss(id),
 }
 
 
